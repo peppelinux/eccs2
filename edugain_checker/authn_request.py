@@ -27,8 +27,8 @@ class Saml2SPAuthnReq(object):
         self.saml_request_dict = {}
 
     def _check_response(self, request):
-        print(request.reason)
         if self.debug:
+            print(request.reason)
             print(request.content)
         #assert request.status_code == 200
         return request.status_code

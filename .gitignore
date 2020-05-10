@@ -2,3 +2,4 @@ selenium_chromedriver.log
 *.swp
 *__pycache__*
 *.json*
+*.pyc
