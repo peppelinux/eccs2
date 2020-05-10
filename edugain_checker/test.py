@@ -25,6 +25,14 @@ LOG_FILE = open('./log.json', 'w')
 idps = json.loads(open('edugain_idps.json').read())
 
 
+def test_login_form(html_page):
+    presences = ('form', 'username', 'password')
+    for i in presences:
+        if i not in html_page:
+            return
+    return True
+
+
 def test_idp(idp):
     test = None
     eid = idp['entityID']
@@ -36,7 +44,11 @@ def test_idp(idp):
         target = '{}?{}'.format(sp.url, qt)
         try:
             result = ua.saml_request(target=target)
+            
+            # Malavolti dice: ed è qui che ti sbagli!
             test = test_login_form(result)
+            #test = (result.status_code == 200)
+
         except Exception as e:
             test = False
             LOG_FILE.write(', {}'.format(e))
@@ -47,13 +59,6 @@ def test_idp(idp):
     if test:
         LOG_FILE.write(', OK\n')
         LOG_FILE.flush()
-
-def test_login_form(html_page):
-    presences = ('form', 'username', 'password')
-    for i in presences:
-        if i not in html_page:
-            return
-    return True
 
 
 def serial():

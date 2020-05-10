@@ -52,7 +52,8 @@ class Saml2SPAuthnReq(object):
 
         if self.wayf:
             self._check_response(sp_saml_req_form)
-            return html_content
+            return sp_saml_req_form
+            #return html_content
 
         action = re.search(form_action_regex, html_content)
         if not action: self._handle_error(target)
@@ -67,7 +68,9 @@ class Saml2SPAuthnReq(object):
         
         if self.debug:
             print(self.saml_request_dict)
-        return html_content
+
+        return sp_saml_req_form
+        #return html_content
         
     def saml_request_post(self):
         d = {'SAMLRequest': self.saml_request_dict['value'],
