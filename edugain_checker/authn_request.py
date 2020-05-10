@@ -43,16 +43,16 @@ class Saml2SPAuthnReq(object):
         # do a GET, do not verify ssl cert validity
         sp_saml_req_form = self.session.get(target, verify=self.verify,
                                             timeout=self.timeout)
+        
         if not sp_saml_req_form.ok:
             raise Exception('SP SAML Request Failed')
-
         html_content =  sp_saml_req_form._content.decode() \
                         if isinstance(sp_saml_req_form._content, bytes) \
                         else sp_saml_req_form._content
 
         if self.wayf:
             self._check_response(sp_saml_req_form)
-            return
+            return html_content
 
         action = re.search(form_action_regex, html_content)
         if not action: self._handle_error(target)
@@ -67,7 +67,7 @@ class Saml2SPAuthnReq(object):
         
         if self.debug:
             print(self.saml_request_dict)
-
+        return html_content
         
     def saml_request_post(self):
         d = {'SAMLRequest': self.saml_request_dict['value'],
