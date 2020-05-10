@@ -12,7 +12,7 @@ class Dict2obj:
 
 
 CHECK_CERT = True
-WORKERS = 30
+WORKERS = 25
 TEST_SP = [{'url': 'https://sp24-test.garr.it/Shibboleth.sso/Login',
             'qt': 'entityID={}'},
            #{'url': 'https://attribute-viewer.aai.switch.ch/Shibboleth.sso/Login',
@@ -39,7 +39,7 @@ def test_idp(idp):
             test = test_login_form(result)
         except Exception as e:
             test = False
-            LOG_FILE.write(', {}, '.format(e))
+            LOG_FILE.write(', {}'.format(e))
         if not test:
                 LOG_FILE.write(', Failed\n')
                 LOG_FILE.flush()
