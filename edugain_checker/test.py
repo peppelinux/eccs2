@@ -12,12 +12,17 @@ class Dict2obj:
 
 
 CHECK_CERT = True
-WORKERS = 25
-TEST_SP = [{'url': 'https://sp24-test.garr.it/Shibboleth.sso/Login',
-            'qt': 'entityID={}'},
-           #{'url': 'https://attribute-viewer.aai.switch.ch/Shibboleth.sso/Login',
-            #'qt': 'entityID={}'}
+WORKERS = 40
+TEST_SP = [
+           {'url': 'https://sp24-test.garr.it/Shibboleth.sso/Login',
+            'qt': 'entityID={}',
+            'wayf': 1},
+           #{'url': 'https://attribute-viewer.aai.switch.ch/Shibboleth.sso/DS',
+            #'qt': 'target=https%3A%2F%2Fattribute-viewer.aai.switch.ch%2Faai%2F&entityID={}',
+            #'wayf': 1}
             ]
+#https://attribute-viewer.aai.switch.ch/Shibboleth.sso/DS?target=https%3A%2F%2Fattribute-viewer.aai.switch.ch%2Faai%2F&entityID=https%3A%2F%2Fidp.unical.it%2Fidp%2Fshibboleth
+
 TEST_SP_OBJ = [Dict2obj(i) for i in TEST_SP]
 LOG_FILE = open('./log.json', 'w')
 
@@ -38,17 +43,15 @@ def test_idp(idp):
     eid = idp['entityID']
     LOG_FILE.write('Testing: {}'.format(eid))
     for sp in TEST_SP_OBJ:
-        ua = Saml2SPAuthnReq(wayf=1, verify=CHECK_CERT, debug=0, timeout=5)
+        ua = Saml2SPAuthnReq(wayf=sp.wayf, verify=CHECK_CERT, debug=0, timeout=5)
         eid = urllib.parse.quote_plus(eid)
         qt = sp.qt.format(eid) 
         target = '{}?{}'.format(sp.url, qt)
         try:
             result = ua.saml_request(target=target)
-            
             # Malavolti dice: ed è qui che ti sbagli!
-            test = test_login_form(result)
+            test = test_login_form(result.content.decode())
             #test = (result.status_code == 200)
-
         except Exception as e:
             test = False
             LOG_FILE.write(', {}'.format(e))
